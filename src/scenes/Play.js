@@ -40,6 +40,7 @@ class Play extends Phaser.Scene{
         //score board
         this.p1Score = 0;
 
+        //scoreboard
         let scoreConfig = {
             fontFamily: "Courier",
             fontSize: '28px',
@@ -80,17 +81,17 @@ class Play extends Phaser.Scene{
         this.ship03.update();
 
         if(this.checkCollision(this.p1Rocket, this.ship03)){
-            console.log("kaboom ship 03")
+            //console.log("kaboom ship 03")
             this.p1Rocket.reset();
             this.shipExplode(this.ship03);
         }
         if(this.checkCollision(this.p1Rocket, this.ship02)){
-            console.log("kaboom ship 02")
+            //console.log("kaboom ship 02")
             this.p1Rocket.reset();
             this.shipExplode(this.ship02);
         }
         if(this.checkCollision(this.p1Rocket, this.ship01)){
-            console.log("kaboom ship 01")
+            //console.log("kaboom ship 01")
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
         }
