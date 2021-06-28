@@ -42,6 +42,9 @@ class Play extends Phaser.Scene{
         //score board
         this.p1Score = 0;
 
+        //high score 
+        this.p1HScore = 0; //subject to change? 
+
         //scoreboard
         let scoreConfig = {
             fontFamily: "Courier",
@@ -54,7 +57,23 @@ class Play extends Phaser.Scene{
             },
             fixedWidth: 100
         }
+
+        //high score config?
+
+        let hscoreConfig = {
+            fontFamily: "Courier",
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: "#843605",
+            align: "right",
+            padding:{
+                top: 5, bottom: 5
+            },
+            fixedWidth: 100
+        }
+        
         this.scoreLeft = this.add.text(borderPadding + borderUISize, borderUISize+borderPadding*2, this.p1Score, scoreConfig);
+        this.scoreRight = this.add.text(borderPadding+borderUISize * 15, borderUISize + borderPadding* 2, this.p1HScore, hscoreConfig);
 
         //game over
         this.gameOver = false;
@@ -74,6 +93,7 @@ class Play extends Phaser.Scene{
         // check key input for restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)){
             this.scene.restart();
+
         }
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)){
             this.scene.start("menuScene");
@@ -106,6 +126,11 @@ class Play extends Phaser.Scene{
             this.ship01.update();
             this.ship02.update();
             this.ship03.update();
+
+            if(this.p1Score >= this.p1HScore){
+                this.scoreLeft.text = this.p1Score;
+            }
+
         }
 
     }
