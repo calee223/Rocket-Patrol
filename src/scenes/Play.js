@@ -104,7 +104,7 @@ class Play extends Phaser.Scene{
         //game over
         this.gameOver = false;
 
-
+        
 
 
         // clock
@@ -132,7 +132,13 @@ class Play extends Phaser.Scene{
         this.elapsed = this.time.now;
         this.timeRight = this.add.text(borderPadding+borderUISize * 15, borderUISize + borderPadding* 2, this.elapsed, clockConfig);
 
-      
+        //speed increase after 30 seconds
+        this.speedIncrease = this.time.delayedCall(30000, () =>{
+            this.ship01.moveSpeed *= 1.3;
+            this.ship02.moveSpeed *= 1.3;
+            this.ship03.moveSpeed *= 1.3;
+            this.owoShip.moveSpeed *= 1.3;
+        }, null, this);
 
 
 
@@ -250,9 +256,9 @@ class Play extends Phaser.Scene{
         this.scoreLeft.text = this.p1Score;
 
         //add time
-        game.settings.gameTimer += 13000;
+        game.settings.gameTimer += 2000;
 
-        let x = this.clock.getRemaining() +13000;
+        let x = this.clock.getRemaining() +2000;
 
         this.clock = this.clock.reset({delay: x, callback:() =>{
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER',
