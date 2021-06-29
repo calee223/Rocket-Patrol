@@ -1,19 +1,31 @@
 class Play extends Phaser.Scene{
     constructor(){
         super("playScene");
+
+        
     }
+
+    
 
     preload(){
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('circleExplosion', './assets/circleExplosion.png', {frameWidth:96, frameHeight: 96, startFrame: 0, endFrame:9});
+        this.load.spritesheet('yellowExplosion', './assets/yellowExplosion.png', {frameWidth:96, frameHeight: 96, startFrame: 0, endFrame:9});
+        this.load.spritesheet('weirdExplosion', './assets/weirdExplosion.png', {frameWidth:96, frameHeight: 96, startFrame:0, endFrame:9});
+        this.load.spritesheet('heartExplosion', './assets/heartExplosion.png', {frameWidth:96, frameHeight: 96, startFrame:0, endFrame:9});
     }
 
     create(){
+
+        //title
         this.add.text(20,20, "Rocket Patrol Play");
 
+        //star background
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0,0);
+        //this.parallax = this.add.tileSprite(0, 0, 500, 300, 'starfield').setOrigin(0,0); // for parallax scrolling +10!
         
         // green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
@@ -23,8 +35,10 @@ class Play extends Phaser.Scene{
         this.add.rectangle(0,0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
         this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
         
-
+        //rocket thing
         this.p1Rocket = new Rocket(this, game.config.width /2, game.config.height - (borderUISize + borderPadding), 'rocket').setOrigin(0.5, 0);
+
+        //ships thing
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0,0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*4, borderUISize*5, 'spaceship', 0, 10).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width + borderUISize*2, borderUISize*6, 'spaceship', 0, 10).setOrigin(0,0);
@@ -38,6 +52,11 @@ class Play extends Phaser.Scene{
 
         //explosion
         this.anims.create({key: 'explode', frames: this.anims.generateFrameNumbers('explosion', {start:0, end: 9, first: 0}), frameRate: 30});
+        this.anims.create({key: 'exploding2', frames: this.anims.generateFrameNumbers('circleExplosion',{start:0, end:9, first: 0}), frameRate:10});
+        this.anims.create({key: 'yellowExploding', frames: this.anims.generateFrameNumbers('yellowExplosion',{start:0, end:9, first: 0}), frameRate:10});
+        this.anims.create({key: 'weirdExploding', frames: this.anims.generateFrameNumbers('weirdExplosion',{start:0, end:9, first: 0}), frameRate:10});
+        this.anims.create({key: 'heartExploding', frames: this.anims.generateFrameNumbers('heartExplosion',{start:0, end:9, first: 0}), frameRate:10});
+        
 
         //score board
         this.p1Score = 0;
@@ -92,8 +111,7 @@ class Play extends Phaser.Scene{
     update(){
         // check key input for restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)){
-            this.scene.restart();
-
+            this.scene.start("playScene");
         }
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)){
             this.scene.start("menuScene");
@@ -126,11 +144,6 @@ class Play extends Phaser.Scene{
             this.ship01.update();
             this.ship02.update();
             this.ship03.update();
-
-            if(this.p1Score >= this.p1HScore){
-                this.scoreLeft.text = this.p1Score;
-            }
-
         }
 
     }
@@ -145,10 +158,33 @@ class Play extends Phaser.Scene{
             return false;
     }
 
+    
+
     shipExplode(ship){
+
+        
         ship.alpha = 0; // hide the ship
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0,0);
-        boom.anims.play('explode');
+        this.randomNumber = Math.floor(Math.random()*5);
+
+
+        // 4 new SFX for explosion and randomization!
+        if(this.randomNumber == 0){
+            boom.anims.play('explode');
+        }
+        if(this.randomNumber == 1){
+            boom.anims.play('exploding2');
+        }
+        if(this.randomNumber == 2){
+            boom.anims.play('yellowExploding');
+        }
+        if(this.randomNumber == 3){
+            boom.anims.play('weirdExploding');
+        }
+        else{
+            boom.anims.play('heartExploding');
+        }
+        
         boom.on('animationcomplete', () =>{
             ship.reset();
             ship.alpha = 1;
@@ -160,5 +196,7 @@ class Play extends Phaser.Scene{
         this.scoreLeft.text = this.p1Score;
         this.sound.play('sfx_explosion');
     }
+
+    
 
 }
