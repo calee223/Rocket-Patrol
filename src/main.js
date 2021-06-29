@@ -17,6 +17,12 @@ June 29 2021
 8. Implemented speed increase after 30 seconds(5)
 
 
+sources:
+- SFXR: http://drpetter.se/project_sfxr.html 
+- Piskel: https://www.piskelapp.com/ 
+- Phaser 3 Documentation: https://photonstorm.github.io/phaser3-docs/
+- Bug fixing w/ student that previously took class
+
 
 */
 
