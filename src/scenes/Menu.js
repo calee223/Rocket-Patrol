@@ -13,7 +13,10 @@ class Menu extends Phaser.Scene{
                 this.load.audio('sfx_heartExplosion', './assets/heartExplosion.wav');
                 this.load.audio('sfx_weirdExplosion', './assets/weirdExplosion.wav');
                 this.load.audio('sfx_yellowExplosion', './assets/yellowExplosion.wav');
-
+                this.load.audio('sfx_owoshiphit', './assets/owoshipHit.wav');
+                /*
+                    Used 'sfxr' program to create the 4 new SFX http://drpetter.se/project_sfxr.html
+                */
             }
             create(){
                 //this.add.text(20,20, "Rocket Patrol Menu");
