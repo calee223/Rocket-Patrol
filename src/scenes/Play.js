@@ -16,6 +16,7 @@ class Play extends Phaser.Scene{
         this.load.image('starfield', './assets/starfieldbackground.png');
         this.load.image('parallax', './assets/stars.png'); 
         this.load.image('uiUpdate', './assets/uiUpdate.png');
+        
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         this.load.spritesheet('circleExplosion', './assets/circleExplosion.png', {frameWidth:96, frameHeight: 96, startFrame: 0, endFrame:9});
         this.load.spritesheet('yellowExplosion', './assets/yellowExplosion.png', {frameWidth:96, frameHeight: 96, startFrame: 0, endFrame:9});
@@ -54,10 +55,13 @@ class Play extends Phaser.Scene{
         // green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
         // white borders
-        this.add.rectangle(0,0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0,0);
-        this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0,0);
-        this.add.rectangle(0,0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
-        this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
+        // this.add.rectangle(0,0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0,0);
+        // this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0,0);
+        // this.add.rectangle(0,0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
+        // this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0,0);
+
+        //updated UI with image
+        this.newUI =this.add.tileSprite(0,0, 640, 480, 'uiUpdate').setOrigin(0,0);
 
 
         // keyboard inputs
@@ -78,12 +82,12 @@ class Play extends Phaser.Scene{
         this.p1Score = 0;
 
         //high score 
-        this.p1HScore = 0; //subject to change? 
+        //this.p1HScore = 0; //subject to change? 
 
         //scoreboard
-        let scoreConfig = {
-            fontFamily: "Courier",
-            fontSize: '28px',
+        this.scoreConfig = {
+            fontFamily: "Georgia",
+            fontSize: '22px',
             backgroundColor: '#F3B141',
             color: "#843605",
             align: "right",
@@ -93,36 +97,42 @@ class Play extends Phaser.Scene{
             fixedWidth: 100
         }
 
-        //high score config?
-
-        let hscoreConfig = {
-            fontFamily: "Courier",
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: "#843605",
-            align: "right",
-            padding:{
-                top: 5, bottom: 5
-            },
-            fixedWidth: 100
-        }
         
-        this.scoreLeft = this.add.text(borderPadding + borderUISize, borderUISize+borderPadding*2, this.p1Score, scoreConfig);
-        this.scoreRight = this.add.text(borderPadding+borderUISize * 15, borderUISize + borderPadding* 2, this.p1HScore, hscoreConfig);
+        this.scoreLeft = this.add.text(borderPadding + borderUISize, borderUISize+borderPadding*2, this.p1Score, this.scoreConfig);
+        //this.scoreRight = this.add.text(borderPadding+borderUISize * 15, borderUISize + borderPadding* 2, this.p1HScore, hscoreConfig); // displays a score of zero
 
         //game over
         this.gameOver = false;
 
+
+
+
         // clock
-        scoreConfig.fixedWidth = 0;
+        this.scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () =>{
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER',
-            scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', scoreConfig).setOrigin(0.5);
+            this.scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', this.scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
 
-        //timer
+        let clockConfig = {
+            fontFamily: "Georgia",
+            fontSize: '20px',
+            backgroundColor: '#000000',
+            color: "#FFFFFF",
+            align: "right",
+            padding:{
+                top: 5, bottom: 5
+            },
+            fixedWidth: 100
+        }
+
+        //Display Clock
+        this.elapsed = this.time.now;
+        this.timeRight = this.add.text(borderPadding+borderUISize * 15, borderUISize + borderPadding* 2, this.elapsed, clockConfig);
+
+      
 
 
 
@@ -132,6 +142,11 @@ class Play extends Phaser.Scene{
     
 
     update(){
+
+        this.timeRight.text = (Math.floor(game.settings.gameTimer/1000))- Math.floor(this.time.now/1000 - this.elapsed/1000);
+        //console.log(Math.floor(this.time.now/1000));
+        //console.log(this.clock.getProgress());
+        
         // check key input for restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)){
             this.scene.start("playScene");
@@ -147,6 +162,7 @@ class Play extends Phaser.Scene{
         this.ship02.update();
         this.ship03.update();
         this.owoShip.update();
+        
 
         if(this.checkCollision(this.p1Rocket, this.ship03)){
             //console.log("kaboom ship 03")
@@ -232,6 +248,18 @@ class Play extends Phaser.Scene{
         // add score and repaint score display
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
+
+        //add time
+        game.settings.gameTimer += 13000;
+
+        let x = this.clock.getRemaining() +13000;
+
+        this.clock = this.clock.reset({delay: x, callback:() =>{
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER',
+            this.scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', this.scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
+        }, callbackScope: this});
         
         
     }
