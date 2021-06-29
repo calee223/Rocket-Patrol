@@ -9,6 +9,10 @@ class Menu extends Phaser.Scene{
                 this.load.audio('sfx_select', './assets/blip_select12.wav');
                 this.load.audio('sfx_explosion', './assets/explosion38.wav');
                 this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
+                this.load.audio('sfx_circleExplosion', './assets/circleExplosion.wav');
+                this.load.audio('sfx_heartExplosion', './assets/heartExplosion.wav');
+                this.load.audio('sfx_weirdExplosion', './assets/weirdExplosion.wav');
+                this.load.audio('sfx_yellowExplosion', './assets/yellowExplosion.wav');
 
             }
             create(){
@@ -18,7 +22,7 @@ class Menu extends Phaser.Scene{
                 //menu text
                 let menuConfig = {
                     fontFamily: "Courier",
-                    fontSize: '28px',
+                    fontSize: '25px',
                     backgroundColor: '#F3B141',
                     color: "#843605",
                     align: "right",
@@ -47,7 +51,7 @@ class Menu extends Phaser.Scene{
                     //easy mode
                     game.settings = {
                         spaceshipSpeed: 2,
-                        gameTimer: 5000
+                        gameTimer: 10000
                     }
                     this.sound.play('sfx_select');
                     this.scene.start('playScene');
@@ -56,7 +60,7 @@ class Menu extends Phaser.Scene{
                     //hard mode
                     game.settings = {
                         spaceshipSpeed: 4,
-                        gameTimer: 3000
+                        gameTimer: 7000
                     }
                     this.sound.play('sfx_select');
                     this.scene.start('playScene');

@@ -11,6 +11,7 @@ class Play extends Phaser.Scene{
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
+        this.load.image('parallax', './assets/stars.png'); 
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         this.load.spritesheet('circleExplosion', './assets/circleExplosion.png', {frameWidth:96, frameHeight: 96, startFrame: 0, endFrame:9});
         this.load.spritesheet('yellowExplosion', './assets/yellowExplosion.png', {frameWidth:96, frameHeight: 96, startFrame: 0, endFrame:9});
@@ -25,7 +26,7 @@ class Play extends Phaser.Scene{
 
         //star background
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0,0);
-        //this.parallax = this.add.tileSprite(0, 0, 500, 300, 'starfield').setOrigin(0,0); // for parallax scrolling +10!
+        this.parallax = this.add.tileSprite(10, 0, 640, 480, 'parallax').setOrigin(0,0); // for parallax scrolling +10!
         
         // green UI background
         this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
@@ -50,7 +51,7 @@ class Play extends Phaser.Scene{
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
-        //explosion
+        //EXPLOSION ANIMATIONS
         this.anims.create({key: 'explode', frames: this.anims.generateFrameNumbers('explosion', {start:0, end: 9, first: 0}), frameRate: 30});
         this.anims.create({key: 'exploding2', frames: this.anims.generateFrameNumbers('circleExplosion',{start:0, end:9, first: 0}), frameRate:10});
         this.anims.create({key: 'yellowExploding', frames: this.anims.generateFrameNumbers('yellowExplosion',{start:0, end:9, first: 0}), frameRate:10});
@@ -106,7 +107,14 @@ class Play extends Phaser.Scene{
             this.gameOver = true;
         }, null, this);
 
+        //timer
+        
+
+
     }
+
+
+    
 
     update(){
         // check key input for restart
@@ -118,6 +126,7 @@ class Play extends Phaser.Scene{
         }
 
         this.starfield.tilePositionX -= 4;
+        this.parallax.tilePositionX -= 2;
         this.p1Rocket.update();
         this.ship01.update();
         this.ship02.update();
@@ -165,24 +174,31 @@ class Play extends Phaser.Scene{
         
         ship.alpha = 0; // hide the ship
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0,0);
+
         this.randomNumber = Math.floor(Math.random()*5);
+        console.log(this.randomNumber);
 
-
-        // 4 new SFX for explosion and randomization!
+        // 4 new animations for explosion and randomization! 
+        //soon to be SFX
         if(this.randomNumber == 0){
             boom.anims.play('explode');
+            this.sound.play('sfx_explosion');
         }
-        if(this.randomNumber == 1){
+        else if(this.randomNumber == 1){
             boom.anims.play('exploding2');
+            this.sound.play('sfx_circleExplosion');
         }
-        if(this.randomNumber == 2){
+        else if(this.randomNumber == 2){
             boom.anims.play('yellowExploding');
+            this.sound.play('sfx_yellowExplosion');
         }
-        if(this.randomNumber == 3){
+        else if(this.randomNumber == 3){
             boom.anims.play('weirdExploding');
+            this.sound.play('sfx_weirdExplosion');
         }
         else{
             boom.anims.play('heartExploding');
+            this.sound.play('sfx_heartExplosion');
         }
         
         boom.on('animationcomplete', () =>{
@@ -194,7 +210,8 @@ class Play extends Phaser.Scene{
         // add score and repaint score display
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
-        this.sound.play('sfx_explosion');
+        
+        
     }
 
     
